@@ -1,0 +1,27 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "../../node_modules"
+      ]
+    },
+    "outDir": "./build",
+    "types": [
+      "@types/chai",
+      "@types/mocha",
+      "@types/sinon",
+      "@types/sinon-chai"
+    ],
+    "typeRoots": [
+      "./@types",
+      "./node_modules/@types",
+      "../../node_modules/@types"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "test/**/*ts"
+  ]
+}

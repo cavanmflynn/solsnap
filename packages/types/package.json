@@ -1,0 +1,21 @@
+{
+  "name": "@solana-tools/solsnap-types",
+  "version": "0.1.0",
+  "types": "./index.d.ts",
+  "license": "(Apache-2.0 AND MIT)",
+  "author": "Cavan Flynn <cavanmflynn@gmail.com>",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Types for Solsnap.",
+  "keywords": [
+    "solana",
+    "metamask",
+    "snap",
+    "plugin",
+    "dapp"
+  ],
+  "dependencies": {},
+  "devDependencies": {}
+}

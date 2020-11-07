@@ -1,0 +1,37 @@
+{
+  "name": "root",
+  "private": true,
+  "author": "Cavan Flynn <cavanmflynn@gmail.com>",
+  "license": "(Apache-2.0 AND MIT)",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build:snap": "lerna run build --scope @solana-tools/solsnap",
+    "build:adapter": "lerna run build --scope @solana-tools/solsnap-adapter",
+    "start:snap": "lerna run serve --scope @solana-tools/solsnap",
+    "start:example:local": "REACT_APP_SNAP=local lerna run start --scope example",
+    "start:example:ipfs": "REACT_APP_SNAP=ipfs lerna run start --scope example",
+    "predemo": "yarn run build:snap && yarn run build:adapter",
+    "build": "yarn run build:ipfs",
+    "build:local": "REACT_APP_SNAP=local lerna run build",
+    "build:ipfs": "REACT_APP_SNAP=ipfs lerna run build",
+    "test": "lerna run test",
+    "lint": "lerna run lint",
+    "lint:style:fix": "lerna run lint:style:fix",
+    "format": "lerna run format",
+    "demo": "yarn run demo:local",
+    "demo:local": "concurrently  --raw --kill-others \"yarn run start:snap\" \"yarn run start:example:local\"",
+    "demo:ipfs": "concurrently  --raw --kill-others \"yarn run start:snap\" \"yarn run start:example:ipfs\""
+  },
+  "devDependencies": {
+    "@types/node": "^12.12.35",
+    "@typescript-eslint/eslint-plugin": "^2.28.0",
+    "@typescript-eslint/parser": "^2.28.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.14.0",
+    "lerna": "^3.20.2",
+    "prettier": "^2.1.2",
+    "typescript": "^3.8.3"
+  }
+}

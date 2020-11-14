@@ -20,12 +20,12 @@ describe('Test rpc handler function: getBalance', function () {
     // Prepare stubs
     walletStub.send.returns(testBip44Entropy);
     walletStub.getPluginState.returns(EmptyMetamaskState());
-    connectionStub.getBalance.returns(Promise.resolve(300));
+    connectionStub.getBalance.returns(Promise.resolve(3000000000));
     // Call getBalance
     const result = await getBalance(walletStub, connectionStub);
     // Assertions
     expect(walletStub.getAppKey).to.have.not.been.called;
     expect(walletStub.getPluginState).to.have.been.calledOnce;
-    expect(result).to.be.eq('300');
+    expect(result).to.be.eq('3');
   });
 });

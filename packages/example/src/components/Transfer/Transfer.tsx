@@ -11,22 +11,22 @@ import {
   TextField,
 } from '@material-ui/core/';
 import { Alert } from '@material-ui/lab';
+import { PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { SolanaSnapApi } from '@solana-tools/solsnap-types';
+import BigNumber from 'bignumber.js';
+import { LAMPORTS_PER_SOL } from '../../constants';
 
 interface ITransferProps {
   network: string;
   api: SolanaSnapApi | null;
-  onNewMessageCallback: any;
+  onNewTransactionCallback: any;
 }
 
 type AlertSeverity = 'success' | 'warning' | 'info' | 'error';
 
-export const Transfer: React.FC<ITransferProps> = ({ network, api, onNewMessageCallback }) => {
+export const Transfer: React.FC<ITransferProps> = ({ api, onNewTransactionCallback }) => {
   const [recipient, setRecipient] = useState<string>('');
   const [amount, setAmount] = useState<string | number>('');
-  const [gasLimit, setGasLimit] = useState<string>('0');
-  const [gasPremium, setGasPremium] = useState<string>('0');
-  const [gasFeeCap, setGasFeeCap] = useState<string>('0');
 
   const [alert, setAlert] = useState(false);
   const [severity, setSeverity] = useState('success' as AlertSeverity);
@@ -46,70 +46,37 @@ export const Transfer: React.FC<ITransferProps> = ({ network, api, onNewMessageC
     [setAmount],
   );
 
-  const handleGasLimitChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setGasLimit(event.target.value);
-    },
-    [setGasLimit],
-  );
-
-  const handleGasPremiumChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setGasPremium(event.target.value);
-    },
-    [setGasPremium],
-  );
-
-  const handleGasFeeCapChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      setGasFeeCap(event.target.value);
-    },
-    [setGasFeeCap],
-  );
-
   const showAlert = (severity: AlertSeverity, message: string) => {
     setSeverity(severity);
     setMessage(message);
     setAlert(true);
   };
 
-  const onAutoFillGas = useCallback(async () => {
-    if (recipient && amount && api) {
-      const messageEstimate = await api.calculateGasForMessage({
-        to: recipient,
-        value: BigInt(amount).toString(),
-      });
-      setGasPremium(messageEstimate.gaspremium);
-      setGasFeeCap(messageEstimate.gasfeecap);
-      setGasLimit(messageEstimate.gaslimit.toString());
-    } else {
-      showAlert('error', 'Please first fill in Recipient and Amount fields');
-    }
-  }, [recipient, amount, api]);
-
   const onSubmit = useCallback(async () => {
     if (amount && recipient && api) {
-      // Temporary signature method until sending is implemented
-      const signedMessage = await api.signMessage({
-        to: recipient,
-        value: BigInt(amount).toString(),
-        gaslimit: Number(gasLimit),
-        gasfeecap: gasFeeCap,
-        gaspremium: gasPremium,
-      });
-      showAlert('info', `Message signature: ${signedMessage.signature.data}`);
-      const txResult = await api.sendMessage(signedMessage);
-      showAlert('info', `Message sent with cid: ${txResult.cid}`);
-      // clear form
+      const recentBlockhash = await api.getRecentBlockhash();
+      const fromPubkey = new PublicKey(await api.getAddress());
+      const transaction = new Transaction({ recentBlockhash }).add(
+        SystemProgram.transfer({
+          fromPubkey,
+          toPubkey: new PublicKey(recipient),
+          lamports: new BigNumber(amount).times(LAMPORTS_PER_SOL).toNumber(),
+        }),
+      );
+      transaction.setSigners(fromPubkey);
+      const signedTransaction = await api.signTransaction(
+        transaction.serialize({ requireAllSignatures: false, verifySignatures: false }).toString('base64'),
+      );
+      showAlert('info', `Signed Transaction: ${signedTransaction}`);
+      const txResult = await api.sendTransaction(signedTransaction);
+      showAlert('info', `Transaction sent with signature: ${txResult.signature}`);
+      // Clear form
       setAmount('');
       setRecipient('');
-      setGasFeeCap('0');
-      setGasPremium('0');
-      setGasLimit('0');
-      // inform to refresh messages display
-      onNewMessageCallback();
+      // Inform to refresh transactions display
+      onNewTransactionCallback();
     }
-  }, [amount, recipient, api, gasLimit, gasFeeCap, gasPremium, onNewMessageCallback]);
+  }, [amount, recipient, api, onNewTransactionCallback]);
 
   return (
     <Card>
@@ -128,7 +95,7 @@ export const Transfer: React.FC<ITransferProps> = ({ network, api, onNewMessageC
             ></TextField>
             <Box m="0.5rem" />
             <TextField
-              InputProps={{ startAdornment: <InputAdornment position="start">{`AttoFIL`}</InputAdornment> }}
+              InputProps={{ startAdornment: <InputAdornment position="start">SOL</InputAdornment> }}
               onChange={handleAmountChange}
               size="medium"
               fullWidth
@@ -137,49 +104,10 @@ export const Transfer: React.FC<ITransferProps> = ({ network, api, onNewMessageC
               variant="outlined"
               value={amount}
             ></TextField>
-            <Box m="0.5rem" />
-            <TextField
-              onChange={handleGasLimitChange}
-              size="medium"
-              fullWidth
-              id="gaslimit"
-              label="Gas Limit"
-              variant="outlined"
-              value={gasLimit + ' AttoFIL'}
-            ></TextField>
-            <Box m="0.5rem" />
-            <TextField
-              onChange={handleGasPremiumChange}
-              size="medium"
-              fullWidth
-              id="gaspremium"
-              label="Gas Premium"
-              variant="outlined"
-              value={gasPremium + ' AttoFIL'}
-            ></TextField>
-            <Box m="0.5rem" />
-            <TextField
-              onChange={handleGasFeeCapChange}
-              size="medium"
-              fullWidth
-              id="gasfeecap"
-              label="Gas Fee Cap"
-              variant="outlined"
-              value={gasFeeCap + ' AttoFIL'}
-            ></TextField>
           </Grid>
         </Grid>
         <Box m="0.5rem" />
         <Grid container item xs={12} justify="flex-end">
-          <Button
-            onClick={onAutoFillGas}
-            color="secondary"
-            variant="contained"
-            size="large"
-            style={{ marginRight: 10 }}
-          >
-            AUTO FILL GAS
-          </Button>
           <Button onClick={onSubmit} color="secondary" variant="contained" size="large">
             SEND
           </Button>

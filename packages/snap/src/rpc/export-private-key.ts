@@ -8,4 +8,4 @@ export const exportPrivateKey = async (wallet: Wallet): Promise<string | null> =
     return (await getKeyPair(wallet)).privateKey;
   }
   return null;
-}
+};

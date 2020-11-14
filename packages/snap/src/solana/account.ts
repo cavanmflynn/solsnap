@@ -24,14 +24,11 @@ export const getKeyPair = async (wallet: Wallet): Promise<KeyPair> => {
   const addressIndex = 0;
   const keyMaterial = deriveKeyFromPath(bip44Entropy, `bip32:${accountIndex}'/bip32:0/bip32:${addressIndex}`);
   const privateKey = keyMaterial.slice(0, 32).toString('hex');
-  const keyPair = nacl.sign.keyPair.fromSeed(
-    Buffer.from(privateKey, 'hex'),
-  );
+  const keyPair = nacl.sign.keyPair.fromSeed(Buffer.from(privateKey, 'hex'));
   const account = new Account(keyPair.secretKey);
 
   return {
-    address: account.publicKey.toBase58(),
     privateKey,
-    publicKey: account.publicKey.toBase58(), // TODO: Same as address
+    address: account.publicKey.toBase58(),
   };
-}
+};

@@ -1,14 +1,28 @@
 import React, { useState } from 'react';
-import { Box, Button, Card, CardContent, CardHeader, Dialog, Grid, TextField } from '@material-ui/core/';
-import { DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from '@material-ui/core';
+import {
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Typography,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Dialog,
+  Grid,
+  TextField,
+} from '@material-ui/core';
 import { SolanaSnapApi } from '@solana-tools/solsnap-types';
+import { Transaction } from '@solana/web3.js';
 import toHex from 'to-hex';
 
-export interface SignMessageProps {
+export interface SignTransactionProps {
   api: SolanaSnapApi | null;
 }
 
-export const SignMessage = (props: SignMessageProps) => {
+export const SignTransaction = (props: SignTransactionProps) => {
   const [textFieldValue, setTextFieldValue] = useState<string>('');
   const [modalBody, setModalBody] = useState<string>('');
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -19,17 +33,17 @@ export const SignMessage = (props: SignMessageProps) => {
 
   const onSubmit = async () => {
     if (textFieldValue && props.api) {
-      const rawMessage = toHex(textFieldValue, { addPrefix: true });
-      const signature = await props.api.signMessageRaw(rawMessage);
+      const rawTransaction = toHex(textFieldValue, { addPrefix: true });
+      const transaction = await props.api.signTransaction(rawTransaction);
       setTextFieldValue('');
-      setModalBody(signature);
+      setModalBody(Transaction.from(Buffer.from(transaction, 'base64')).signature?.toString('hex')!);
       setModalOpen(true);
     }
   };
 
   return (
     <Card style={{ height: '100%' }}>
-      <CardHeader title="Sign custom message" />
+      <CardHeader title="Sign Base64 Encoded Transaction" />
       <CardContent>
         <Grid container>
           <TextField
@@ -37,8 +51,8 @@ export const SignMessage = (props: SignMessageProps) => {
             value={textFieldValue}
             size="medium"
             fullWidth
-            id="custom-message"
-            label="Message"
+            id="custom-transaction"
+            label="Transaction"
             variant="outlined"
           />
         </Grid>
@@ -55,10 +69,10 @@ export const SignMessage = (props: SignMessageProps) => {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{'Message signature'}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">{'Transaction signature'}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            This is signature of your message:
+            This is signature of your transaction:
             <br />
             <Typography style={{ wordWrap: 'break-word' }}>{modalBody}</Typography>
           </DialogContentText>

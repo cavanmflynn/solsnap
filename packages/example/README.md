@@ -1,4 +1,4 @@
-### Metamask Solana Snap Example 
+### Metamask Solana Snap Example
 
 - `yarn install`
 - serve snap

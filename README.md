@@ -14,11 +14,12 @@ Metamask snap (plugin) to enable Metamask users interaction with solana dapps.
 
 First, install the beta release of Metamask plugin: 
 
-- [download latest Metamask snaps beta release](https://github.com/NodeFactoryIo/metamask-snaps-beta/releases) (chrome recommended)
-- extract downloaded archive
-- go to [chrome://extensions/](chrome://extensions/)
-- enable "Developer mode"
-- click "Load unpacked" and point to extracted archive chrome directory
+- [Download latest Metamask snaps beta release](https://github.com/NodeFactoryIo/metamask-snaps-beta/releases) (chrome recommended)
+  - If you have another version of MetaMask installed, temporarily disable it.
+- Extract downloaded archive
+- Go to [chrome://extensions/](chrome://extensions/)
+- Enable "Developer mode"
+- Click "Load unpacked" and point to extracted archive chrome directory
 
 #### Demo DAPP
 

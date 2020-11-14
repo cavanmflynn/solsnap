@@ -8,7 +8,6 @@ declare global {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       send: <T>(request: SnapRpcMethodRequest | { method: string; params?: any[] }) => Promise<T>;
       on: (eventName: unknown, callback: unknown) => unknown;
-      // requestIndex: () => Promise<{getPluginApi: (origin: string) => Promise<FilecoinApi>}>;
     };
   }
 }
@@ -24,7 +23,7 @@ export interface SnapInitializationResponse {
 
 export async function installSolanaSnap(): Promise<SnapInitializationResponse> {
   try {
-    console.log('installing snap');
+    console.log('Installing snap');
     let metamaskSolanaSnap;
     if (process.env.REACT_APP_SNAP === 'local') {
       metamaskSolanaSnap = await enableSolanaSnap({ network: 's' }, localOrigin);
@@ -32,7 +31,7 @@ export async function installSolanaSnap(): Promise<SnapInitializationResponse> {
       metamaskSolanaSnap = await enableSolanaSnap({ network: 's' });
     }
     isInstalled = true;
-    console.log('Snap installed!!');
+    console.log('Snap installed!');
     return { isSnapInstalled: true, snap: metamaskSolanaSnap };
   } catch (e) {
     console.log(e);

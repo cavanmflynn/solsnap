@@ -1,9 +1,5 @@
 import { Transaction } from '@solana/web3.js';
 
-export interface GetPublicKeyRequest{
-  method: 'sol_getPublicKey';
-}
-
 export interface GetAddressRequest {
   method: 'sol_getAddress';
 }
@@ -22,14 +18,14 @@ export interface ConfigureRequest {
 export interface SignTransactionRequest {
   method: 'sol_signTransaction';
   params: {
-    transaction: Transaction;
+    transaction: string;
   };
 }
 
 export interface SendTransactionRequest {
   method: 'sol_sendTransaction';
   params: {
-    signedTransaction: Transaction;
+    signedTransaction: string;
   };
 }
 
@@ -37,16 +33,20 @@ export interface GetBalanceRequest {
   method: 'sol_getBalance';
 }
 
+export interface GetRecentBlockhashRequest {
+  method: 'sol_getRecentBlockhash';
+}
+
 export interface GetTransactionsRequest {
   method: 'sol_getTransactions';
 }
 
 export type MetamaskSolanaRpcRequest =
-    GetPublicKeyRequest |
     GetAddressRequest |
     ExportSeedRequest |
     ConfigureRequest |
     GetBalanceRequest |
+    GetRecentBlockhashRequest |
     GetTransactionsRequest |
     SignTransactionRequest |
     SendTransactionRequest;
@@ -101,18 +101,17 @@ export type SolanaNetwork = 's' | 't';
 export interface SolanaEventApi {}
 
 export interface SolanaSnapApi {
-  getPublicKey(): Promise<string>;
   getAddress(): Promise<string>;
   getBalance(): Promise<string>;
+  getRecentBlockhash(): Promise<string>;
   exportPrivateKey(): Promise<string>;
   configure(configuration: Partial<SnapConfig>): Promise<void>;
-  signTransaction(transaction: Transaction): Promise<Transaction>;
-  sendTransaction(signedTransaction: Transaction): Promise<TransactionStatus>;
+  signTransaction(transaction: string): Promise<string>;
+  sendTransaction(signedTransaction: string): Promise<TransactionStatus>;
   getTransactions(): Promise<TransactionStatus[]>;
 }
 
 export interface KeyPair {
   address: string;
   privateKey: string;
-  publicKey: string;
 }

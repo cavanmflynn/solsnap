@@ -11,11 +11,7 @@ function formatBalance(balance: number | string, decimals: number): string {
   return balance as string;
 }
 
-export function getSolanaAssetDescription(
-  balance: number | string,
-  address: string,
-  configuration: SnapConfig,
-): Asset {
+export function getSolanaAssetDescription(balance: number | string, address: string, configuration: SnapConfig): Asset {
   return {
     balance: formatBalance(balance, configuration.unit.decimals),
     customViewUrl: configuration.unit.customViewUrl || `https://explorer.solana.com/address/${address}`,

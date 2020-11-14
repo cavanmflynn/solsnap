@@ -15,9 +15,9 @@ import {
 import { MetaMaskConnector } from '../MetaMaskConnector/MetaMaskConnector';
 import { MetaMaskContext } from '../../context/metamask';
 import { Account } from '../../components/Account/Account';
-import { SolanaSnapApi, MessageStatus } from '@solana-tools/solsnap-types';
+import { SolanaSnapApi, TransactionStatus } from '@solana-tools/solsnap-types';
 import { TransactionTable } from '../../components/TransactionTable/TransactionTable';
-import { SignMessage } from '../../components/SignMessage/SignMessage';
+import { SignTransaction } from '../../components/SignTransaction/SignTransaction';
 import { Transfer } from '../../components/Transfer/Transfer';
 import Footer from '../../Footer';
 
@@ -26,8 +26,7 @@ export const Dashboard = () => {
 
   const [balance, setBalance] = useState('');
   const [address, setAddress] = useState('');
-  const [publicKey, setPublicKey] = useState('');
-  const [messages, setMessages] = useState<MessageStatus[]>([]);
+  const [transactions, setTransactions] = useState<TransactionStatus[]>([]);
 
   const [balanceChange, setBalanceChange] = useState<boolean>(false);
 
@@ -41,21 +40,21 @@ export const Dashboard = () => {
     if (api) {
       await api.configure({ network: selectedNetwork });
       setNetwork(selectedNetwork);
-      setMessages(await api.getMessages());
+      setTransactions(await api.getTransactions());
     }
   };
 
-  const handleNewMessage = useCallback(async () => {
+  const handleNewTransaction = useCallback(async () => {
     if (api) {
-      setMessages(await api.getMessages());
+      setTransactions(await api.getTransactions());
     }
-  }, [api, setMessages]);
+  }, [api, setTransactions]);
 
   useEffect(() => {
     (async () => {
       if (state.solanaSnap.isInstalled && state.solanaSnap.snap) {
-        const filecoinApi = await state.solanaSnap.snap.getSolanaSnapApi();
-        setApi(filecoinApi);
+        const solanaApi = await state.solanaSnap.snap.getSolanaSnapApi();
+        setApi(solanaApi);
       }
     })();
   }, [state.solanaSnap.isInstalled, state.solanaSnap.snap]);
@@ -64,10 +63,9 @@ export const Dashboard = () => {
     (async () => {
       if (api) {
         setAddress(await api.getAddress());
-        setPublicKey(await api.getPublicKey());
         setBalance(await api.getBalance());
-        setMessages(await api.getMessages());
-        console.log(await api.getMessages());
+        setTransactions(await api.getTransactions());
+        console.log(await api.getTransactions());
       }
     })();
   }, [api, network]);
@@ -92,8 +90,8 @@ export const Dashboard = () => {
     <Container maxWidth="lg">
       <Grid direction="column" alignItems="center" justify="center" container spacing={3}>
         <Box m="2rem" style={{ textAlign: 'center' }}>
-          <Typography variant="h2">Solsnap demo</Typography>
-          <Typography style={{ color: 'gray', fontStyle: 'italic' }} variant="h6">
+          <Typography variant="h2">Solsnap Demo</Typography>
+          <Typography style={{ color: 'gray' }} variant="h6">
             Solsnap enables Solana network inside Metamask.
           </Typography>
         </Box>
@@ -111,31 +109,25 @@ export const Dashboard = () => {
           </Box>
           <Grid container spacing={3} alignItems="stretch">
             <Grid item xs={12}>
-              <Account
-                address={address}
-                balance={balance + ' FIL'}
-                publicKey={publicKey}
-                api={api}
-                balanceChange={balanceChange}
-              />
+              <Account address={address} balance={`${balance} SOL`} api={api} balanceChange={balanceChange} />
             </Grid>
           </Grid>
           <Box m="1rem" />
           <Grid container spacing={3} alignItems="stretch">
             <Grid item md={6} xs={12}>
-              <Transfer api={api} network={network} onNewMessageCallback={handleNewMessage} />
+              <Transfer api={api} network={network} onNewTransactionCallback={handleNewTransaction} />
             </Grid>
             <Grid item md={6} xs={12}>
-              <SignMessage api={api} />
+              <SignTransaction api={api} />
             </Grid>
           </Grid>
           <Box m="1rem" />
           <Grid container spacing={3} alignItems={'stretch'}>
             <Grid item xs={12}>
               <Card>
-                <CardHeader title="Account transactions" />
+                <CardHeader title="Account Transactions" />
                 <CardContent>
-                  <TransactionTable txs={messages} />
+                  <TransactionTable txs={transactions} />
                 </CardContent>
               </Card>
             </Grid>

@@ -4,8 +4,8 @@ import {
   exportPrivateKey,
   getAddress,
   getBalance,
+  getRecentBlockhash,
   getTransactions,
-  getPublicKey,
   sendTransaction,
   signTransaction,
 } from './methods';
@@ -26,8 +26,8 @@ export class MetamaskSolanaSnap {
       exportPrivateKey: exportPrivateKey.bind(this),
       getAddress: getAddress.bind(this),
       getBalance: getBalance.bind(this),
+      getRecentBlockhash: getRecentBlockhash.bind(this),
       getTransactions: getTransactions.bind(this),
-      getPublicKey: getPublicKey.bind(this),
       sendTransaction: sendTransaction.bind(this),
       signTransaction: signTransaction.bind(this),
     };

@@ -1,10 +1,9 @@
 import React from 'react';
-import { Box, Button, Card, CardContent, CardHeader, Divider, Grid, Typography } from '@material-ui/core/';
+import { Box, Button, Card, CardContent, CardHeader, Divider, Grid, Typography } from '@material-ui/core';
 import { SolanaSnapApi } from '@solana-tools/solsnap-types';
 
 export interface AccountProps {
   address: string;
-  publicKey: string;
   balance: string;
   balanceChange: boolean;
   api: SolanaSnapApi | null;
@@ -20,19 +19,15 @@ export const Account = (props: AccountProps) => {
 
   return (
     <Card>
-      <CardHeader title="Account details" />
+      <CardHeader title="Account Details" />
       <CardContent>
         <Grid container alignItems="center">
           <Grid item md={6} xs={12}>
-            <Typography variant="h6">ADDRESS:</Typography>
+            <Typography variant="h6">Address:</Typography>
             <Typography variant="subtitle2">{props.address}</Typography>
             <Divider light />
             <Box m={'0.5rem'} />
-            <Typography variant="h6">PUBLIC KEY:</Typography>
-            <Typography variant="subtitle2">{props.publicKey}</Typography>
-            <Divider light />
-            <Box m={'0.5rem'} />
-            <Typography variant="h6">ACCOUNT BALANCE:</Typography>
+            <Typography variant="h6">Account Balance:</Typography>
             {props.balanceChange ? (
               <Typography variant="subtitle2">
                 <b>{props.balance}</b>

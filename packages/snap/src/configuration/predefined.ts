@@ -9,7 +9,7 @@ export const solanaMainnetConfiguration: SnapConfig = {
     url: clusterApiUrl('mainnet-beta'),
   },
   unit: {
-    decimals: 10,
+    decimals: 9,
     image: 'https://cryptologos.cc/logos/solana-sol-logo.svg?v=007',
     symbol: 'SOL',
   },
@@ -23,7 +23,7 @@ export const solanaTestnetConfiguration: SnapConfig = {
     url: clusterApiUrl('testnet'),
   },
   unit: {
-    decimals: 10,
+    decimals: 9,
     image: 'https://cryptologos.cc/logos/solana-sol-logo.svg?v=007',
     symbol: 'SOL',
   },

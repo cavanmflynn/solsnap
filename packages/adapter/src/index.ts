@@ -60,4 +60,4 @@ export const enableSolanaSnap = async (
   await (await snap.getSolanaSnapApi()).configure(config);
   // Return snap object
   return snap;
-}
+};

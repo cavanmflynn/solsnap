@@ -10,4 +10,4 @@ export const configure = (wallet: Wallet, networkName: string, overrides?: unkno
   state.solana.config = configuration;
   wallet.updatePluginState(state);
   return configuration;
-}
+};

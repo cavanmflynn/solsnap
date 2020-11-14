@@ -5,7 +5,7 @@ import { testBip44Entropy } from './key-pair-test-constants';
 import { SnapConfig } from '@solana-tools/solsnap-types';
 import { signTransaction } from '../../../src/rpc/sign-transaction';
 import { Account, SystemProgram, Transaction } from '@solana/web3.js';
-import { getKeyPair } from '../../../src/solana';
+import { fromBase64, getKeyPair, toBase64 } from '../../../src/solana';
 import { Buffer } from 'buffer';
 import nacl from 'tweetnacl';
 
@@ -14,7 +14,7 @@ chai.use(sinonChai);
 describe('Test rpc handler function: signTransaction', () => {
   const walletStub = new WalletMock();
 
-  let transaction: Transaction;
+  let transaction: string;
   beforeEach(async () => {
     walletStub.send.returns(testBip44Entropy);
     walletStub.getPluginState.returns({
@@ -26,13 +26,11 @@ describe('Test rpc handler function: signTransaction', () => {
       },
     });
     const { privateKey } = await getKeyPair(walletStub);
-    const keyPair = nacl.sign.keyPair.fromSeed(
-      Buffer.from(privateKey, 'hex'),
-    );
+    const keyPair = nacl.sign.keyPair.fromSeed(Buffer.from(privateKey, 'hex'));
     const account1 = new Account(keyPair.secretKey);
     const account2 = new Account();
     const nonceAccount = new Account();
-  
+
     const nonce = account2.publicKey.toBase58(); // Fake Nonce hash
     const nonceInfo = {
       nonce,
@@ -41,14 +39,16 @@ describe('Test rpc handler function: signTransaction', () => {
         authorizedPubkey: account1.publicKey,
       }),
     };
-  
-    transaction = new Transaction({ nonceInfo }).add(
+
+    const tx = new Transaction({ nonceInfo }).add(
       SystemProgram.transfer({
         fromPubkey: account1.publicKey,
         toPubkey: account2.publicKey,
         lamports: 123,
       }),
     );
+    tx.setSigners(account1.publicKey);
+    transaction = toBase64(tx);
   });
 
   afterEach(function () {
@@ -66,7 +66,7 @@ describe('Test rpc handler function: signTransaction', () => {
     expect(walletStub.send).to.have.been.calledThrice;
     expect(walletStub.getPluginState).to.have.been.calledTwice;
     expect(walletStub.getAppKey).to.have.not.been.called;
-    expect(signedTransaction.signature).to.not.be.empty;
+    expect(fromBase64(signedTransaction).signature).to.not.be.empty;
   });
 
   it('should cancel signing on negative prompt', async function () {
@@ -95,11 +95,11 @@ describe('Test rpc handler function: signTransaction', () => {
       },
     });
 
-    const invalidTransaction = transaction;
+    const invalidTransaction = fromBase64(transaction);
     invalidTransaction.instructions = [];
 
     expect(async () => {
-      return signTransaction(walletStub, invalidTransaction);
+      return signTransaction(walletStub, toBase64(invalidTransaction));
     }).to.throw;
   });
 });

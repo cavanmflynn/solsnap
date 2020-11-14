@@ -2,9 +2,9 @@ import { EmptyMetamaskState, Wallet } from './interfaces';
 import { SolanaEventApi } from '@solana-tools/solsnap-types';
 import { getAddress } from './rpc/get-address';
 import { exportPrivateKey } from './rpc/export-private-key';
-import { getPublicKey } from './rpc/get-public-key';
 import { getConnection } from './solana';
 import { getBalance } from './rpc/get-balance';
+import { getRecentBlockhash } from './rpc/get-recent-blockhash';
 import { configure } from './rpc/configure';
 import { updateAsset } from './asset';
 import { getTransactions } from './rpc/get-transactions';
@@ -14,7 +14,7 @@ import { Connection } from '@solana/web3.js';
 
 declare let wallet: Wallet;
 
-const apiDependentMethods = ['sol_getBalance', 'sol_signTransaction', 'sol_sendTransaction' /*, 'sol_getGasForMessage' */];
+const apiDependentMethods = ['sol_getBalance', 'sol_signTransaction', 'sol_sendTransaction', 'sol_getRecentBlockhash'];
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 wallet.registerApiRequestHandler(async function (_: URL): Promise<SolanaEventApi> {
@@ -46,14 +46,14 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
       return configuration;
     case 'sol_getAddress':
       return getAddress(wallet);
-    case 'sol_getPublicKey':
-      return getPublicKey(wallet);
     case 'sol_exportPrivateKey':
       return exportPrivateKey(wallet);
     case 'sol_getBalance':
       const balance = await getBalance(wallet, connection);
       await updateAsset(wallet, originString, balance);
       return balance;
+    case 'sol_getRecentBlockhash':
+      return getRecentBlockhash(connection);
     case 'sol_getTransactions':
       return getTransactions(wallet);
     case 'sol_signTransaction':

@@ -16,7 +16,6 @@ import {
 } from '@material-ui/core';
 import { SolanaSnapApi } from '@solana-tools/solsnap-types';
 import { Transaction } from '@solana/web3.js';
-import toHex from 'to-hex';
 
 export interface SignTransactionProps {
   api: SolanaSnapApi | null;
@@ -33,8 +32,7 @@ export const SignTransaction = (props: SignTransactionProps) => {
 
   const onSubmit = async () => {
     if (textFieldValue && props.api) {
-      const rawTransaction = toHex(textFieldValue, { addPrefix: true });
-      const transaction = await props.api.signTransaction(rawTransaction);
+      const transaction = await props.api.signTransaction(textFieldValue.trim());
       setTextFieldValue('');
       setModalBody(Transaction.from(Buffer.from(transaction, 'base64')).signature?.toString('hex')!);
       setModalOpen(true);

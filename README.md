@@ -20,11 +20,11 @@ First, install the beta release of Metamask plugin:
 - Enable "Developer mode"
 - Click "Load unpacked" and point to extracted archive chrome directory
 
-#### Demo DAPP
+#### Demo dApp
 
 ##### Live demo
 
-Test Solsnap inside [our demo DAPP.](https://solsnap.netlify.app/)
+Test Solsnap inside [the demo dApp.](https://solsnap.netlify.app/)
 
 ##### Running Solsnap demo locally
 

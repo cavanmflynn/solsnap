@@ -2,7 +2,7 @@ import { hasMetaMask, isMetamaskSnapsSupported, isSnapInstalled } from './utils'
 import { MetamaskSolanaSnap as MSSnap } from './snap';
 import { SnapConfig } from '@solana-tools/solsnap-types';
 
-const defaultSnapOrigin = 'https://bafybeigzphbumdkucnj2c6nr5xb3kwsq5gs2gp7w3qldgbvfeycfsbjylu.ipfs.infura-ipfs.io';
+const defaultSnapOrigin = 'https://bafybeidttkppmgxhgjnjya6fzzkzlbgkuwcnhjfhnm7jbfhhajda2n424q.ipfs.infura-ipfs.io';
 const defaultSnapId = `wallet_plugin_${defaultSnapOrigin}`;
 
 export type MetamaskSolanaSnap = MSSnap;

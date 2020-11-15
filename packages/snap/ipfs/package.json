@@ -48,7 +48,7 @@
   "web3Wallet": {
     "bundle": {
       "local": "dist/bundle.js",
-      "url": "http://localhost:8081/dist/bundle.js"
+      "url": "https://ipfs.infura.io/ipfs/QmNqkeFq2GiCrszyM6A2QutfHFPfvqHESYicvc3EwinBNL"
     },
     "initialPermissions": {
       "alert": {},
